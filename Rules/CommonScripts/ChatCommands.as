@@ -58,6 +58,28 @@ bool onServerProcessChat(CRules@ this, const string& in text_in, string& out tex
 			}
 		}
 	}
+	else if (text_in == "!forcestartgame")
+	{
+		getRules().SetCurrentState(GAME);
+	}
+	else if (text_in == "!forceendgame")
+	{
+		getRules().SetCurrentState(GAME_OVER);
+	}
+	else if (text_in == "!startgame")
+	{
+		getNet().server_SendMsg("OFFICIAL \N OFFICIAL \N OFFICIAL \N OFFICIAL");
+		LoadMap(getMap().getMapName());	
+	}
+	else if (text_in == "!lockteams") // this is from captains mod, not sure if it works :P
+	{
+        getRules().set_bool("teams_locked", !getRules().get_bool("teams_locked"));
+
+        if (getRules().get_bool("teams_locked"))
+            getNet().server_SendMsg("Teams are locked.");
+        else
+            getNet().server_SendMsg("Teams are unlocked.");
+    }
 	//spawning things
     
 	//these all require sv_test - no spawning without it
