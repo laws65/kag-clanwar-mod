@@ -69,7 +69,8 @@ bool onServerProcessChat(CRules@ this, const string& in text_in, string& out tex
 	else if (text_in == "!startgame")
 	{
 		getNet().server_SendMsg("OFFICIAL \N OFFICIAL \N OFFICIAL \N OFFICIAL");
-		LoadMap(getMap().getMapName());	
+		changeAllPlayersTo("builder");
+		LoadMap(getMap().getMapName());
 	}
 	else if (text_in == "!lockteams") // this is from captains mod, not sure if it works :P
 	{
@@ -203,4 +204,22 @@ bool onClientProcessChat(CRules@ this, const string& in text_in, string& out tex
     }
 
     return true;
+}
+
+
+void changeAllPlayersTo(string newClass) // thanks numan :)
+{
+	for(u16 i = 0; i < getPlayerCount(); i++)
+	{
+		CPlayer@ player = getPlayer(i);
+		if (player == null) continue;
+		CBlob@ oldClassBlob = player.getBlob();
+		if (oldClassBlob == null) continue;
+		if (oldClassBlob.getName() == newClass) continue;
+		CBlob@ newClassBlob = server_CreateBlob(newClass);
+		newClassBlob.setPosition(oldClassBlob.getPosition());
+		oldClassBlob.server_Die();
+		newClassBlob.server_setTeamNum(player.getTeamNum());
+		newClassBlob.server_SetPlayer(player);
+	}
 }
